@@ -18,14 +18,6 @@
 3. パッケージ（インストーラ作成）:
 
    ```bash
-   npm i
-   npm run dev
-   ```
-
-   → トレイにアイコンが出ます。設定ウィンドウで **Broker URL / Topic / Yuka API** を入力して **Start**。
-4. パッケージ（インストーラ作成）:
-
-   ```bash
    npm run build
    ```
 

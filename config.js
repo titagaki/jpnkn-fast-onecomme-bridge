@@ -1,5 +1,5 @@
 // config.js
-const Store = require('electron-store');
+import Store from 'electron-store';
 
 const schema = {
   brokerUrl:   { type: 'string', default: 'wss://<broker>/mqtt' },
@@ -14,5 +14,5 @@ const schema = {
   delayMs:     { type: 'number', default: 100 },
   autoStart:   { type: 'boolean', default: false }
 };
-
-module.exports = new Store({ schema, watch: true });
+const store = new Store({ schema, watch: true });
+export default store;

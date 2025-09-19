@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "main": "main.js",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "electron .",
     "build": "electron-builder"

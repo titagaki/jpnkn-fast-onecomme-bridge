@@ -1,10 +1,14 @@
 // jpnkn Fast (MQTT/WS) → OneComme (HTTP API) ブリッジ - Electron メインプロセス
 
-const { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage } = require('electron');
-const path  = require('path');
-const axios = require('axios');
-const mqtt  = require('mqtt');
-const store = require('./config');
+import { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage } from 'electron';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import axios from 'axios';
+import mqtt from 'mqtt';
+import store from './config.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
 
 let win = null;
 let tray = null;
