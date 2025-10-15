@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>jpnkn Fast → OneComme</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 16px; }
+    input, button { font-size: 14px; }
+    label { display:block; margin-top:8px; }
+    #log { height: 200px; overflow: auto; background:#111; color:#0f0; padding:8px; }
+    #msgs { height: 260px; overflow:auto; border:1px solid #ccc; padding:8px; }
+    .row { display:flex; gap:8px; align-items:center; }
+    .row > * { flex:1; }
+  </style>
+</head>
+<body>
+  <h2>jpnkn Fast → わんコメ</h2>
+  <div class="row">
+    <label>Broker URL <input id="brokerUrl" placeholder="wss://.../mqtt" /></label>
+    <label>Topics <input id="topics" placeholder="bbs/#, bbs/eg" /></label>
+  </div>
+  <div class="row">
+    <label>User <input id="username" /></label>
+    <label>Pass <input id="password" type="password" /></label>
+  </div>
+  <div class="row">
+    <label>OneComme Base <input id="onecommeBase" placeholder="http://127.0.0.1:11180" /></label>
+    <label>Service ID <input id="serviceId" placeholder="わんコメ枠ID (右クリック→IDをコピー)" /></label>
+  </div>
+  <div class="row">
+    <label>Author Name <input id="authorName" placeholder="jpnkn" /></label>
+    <label>Author UserId <input id="authorUserId" placeholder="jpnkn:bridge" /></label>
+  </div>
+  <div class="row">
+    <label>Chunk Size <input id="chunkSize" type="number" min="40" max="240" /></label>
+    <label>Delay(ms) <input id="delayMs" type="number" min="0" max="1000" /></label>
+    <label><input id="autoStart" type="checkbox" /> Auto Start</label>
+  </div>
+  <div class="row">
+    <button id="save">Save</button>
+    <button id="start">Start</button>
+    <button id="stop">Stop</button>
+    <span id="status">● Disconnected</span>
+  </div>
+
+  <h3>Messages</h3>
+  <div id="msgs"></div>
+  <h3>Log</h3>
+  <pre id="log"></pre>
+  <script src="renderer.js"></script>
+</body>
+</html>
