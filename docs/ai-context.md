@@ -25,3 +25,8 @@ AIに機能追加やデバッグを依頼する際は、以下の前提条件を
   }
 }
 ```
+
+## わんコメAPI仕様
+- **公式ドキュメント**: [わんコメ HTTP API (Postman)](https://documenter.getpostman.com/view/20406518/2s9Y5SX6EE)
+- **詳細定義**: `docs/onecomme-api-spec.md` および `docs/schema-onecomme.json` を参照。
+- 送信時は `service.id`（枠ID）が必須であり、受信したコメントは `external` サービスとして扱う必要がある。

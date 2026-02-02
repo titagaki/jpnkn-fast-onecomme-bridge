@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JpnknMqttPayload",
+  "type": "object",
+  "properties": {
+    "board": { "type": "string", "description": "板ID" },
+    "thread": { "type": "string", "description": "スレッドID" },
+    "num": { "type": "integer", "description": "レス番号" },
+    "name": { "type": "string", "description": "投稿者名" },
+    "mail": { "type": "string", "description": "メール欄" },
+    "date": { "type": "string", "description": "投稿日時文字列" },
+    "id": { "type": "string", "description": "ユーザーID" },
+    "message": { "type": "string", "description": "レス本文" },
+    "is_new": { "type": "boolean", "description": "新着フラグ" }
+  },
+  "required": ["board", "thread", "num", "message", "is_new"]
+}
