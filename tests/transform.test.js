@@ -5,7 +5,7 @@
  * 「正解」として、変換ロジックが仕様に準拠していることを検証します。
  */
 
-import { transformJpnknToOneComme, parsePayload, splitForTTS, shouldProcessMessage } from '../src/transform.js';
+import { transformJpnknToOneComme, parsePayload, splitForTTS, shouldProcessMessage } from '../dist/src/transform.js';
 
 describe('transformJpnknToOneComme', () => {
   const defaultOptions = { serviceId: 'test-service-id' };
@@ -115,25 +115,6 @@ describe('transformJpnknToOneComme', () => {
 
       const result = transformJpnknToOneComme(jpnknPayload, defaultOptions);
       expect(result.comment.userId).toBe('jpnkn:anonymous');
-    });
-
-    test('authorUserIdオプションが指定された場合はそちらが優先される', () => {
-      const jpnknPayload = {
-        board: 'board1',
-        thread: 'thread1',
-        num: 1,
-        id: 'original-id',
-        message: 'test',
-        is_new: true
-      };
-
-      const options = {
-        serviceId: 'test-service',
-        authorUserId: 'custom-user-id'
-      };
-
-      const result = transformJpnknToOneComme(jpnknPayload, options);
-      expect(result.comment.userId).toBe('custom-user-id');
     });
   });
 
@@ -262,47 +243,6 @@ describe('transformJpnknToOneComme', () => {
       const result = transformJpnknToOneComme(jpnknPayload, defaultOptions);
 
       expect(result.comment.id).toBe('jpnkn:test:123:0');
-    });
-  });
-
-  describe('is_newフラグの処理', () => {
-    test('is_new: trueが正しく伝播する', () => {
-      const jpnknPayload = {
-        board: 'test',
-        thread: '123',
-        num: 1,
-        message: 'test',
-        is_new: true
-      };
-
-      const result = transformJpnknToOneComme(jpnknPayload, defaultOptions);
-      expect(result.comment.is_new).toBe(true);
-    });
-
-    test('is_new: falseが正しく伝播する', () => {
-      const jpnknPayload = {
-        board: 'test',
-        thread: '123',
-        num: 1,
-        message: 'test',
-        is_new: false
-      };
-
-      const result = transformJpnknToOneComme(jpnknPayload, defaultOptions);
-      expect(result.comment.is_new).toBe(false);
-    });
-
-    test('is_newが未定義の場合はtrueになる', () => {
-      const jpnknPayload = {
-        board: 'test',
-        thread: '123',
-        num: 1,
-        message: 'test'
-        // is_new not provided
-      };
-
-      const result = transformJpnknToOneComme(jpnknPayload, defaultOptions);
-      expect(result.comment.is_new).toBe(true);
     });
   });
 

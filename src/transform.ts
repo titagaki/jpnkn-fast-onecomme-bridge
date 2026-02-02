@@ -23,14 +23,11 @@ export interface OneCommePayload {
     userId: string;
     name: string;
     comment: string;
-    is_new?: boolean;
   };
 }
 
 export interface TransformOptions {
   serviceId: string;
-  authorName?: string;
-  authorUserId?: string;
 }
 
 /**
@@ -40,7 +37,7 @@ export function transformJpnknToOneComme(
   jpnknPayload: JpnknPayload,
   options: TransformOptions
 ): OneCommePayload {
-  const { serviceId, authorName, authorUserId } = options;
+  const { serviceId } = options;
 
   if (!serviceId) {
     throw new Error('serviceId is required');
@@ -54,8 +51,8 @@ export function transformJpnknToOneComme(
     throw new Error('message is required in jpnkn payload');
   }
 
-  const userId = authorUserId || jpnknPayload.id || 'jpnkn:anonymous';
-  const name = authorName || jpnknPayload.name || '名無し';
+  const userId = jpnknPayload.id || 'jpnkn:anonymous';
+  const name = jpnknPayload.name || '名無し';
   const comment = String(jpnknPayload.message);
 
   let commentId: string;
@@ -71,8 +68,7 @@ export function transformJpnknToOneComme(
       id: commentId,
       userId,
       name,
-      comment,
-      is_new: jpnknPayload.is_new !== false
+      comment
     }
   };
 }

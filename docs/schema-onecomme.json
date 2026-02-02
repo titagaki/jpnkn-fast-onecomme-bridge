@@ -16,8 +16,7 @@
         "id": { "type": "string", "description": "一意のコメントID" },
         "userId": { "type": "string", "description": "投稿者ID" },
         "name": { "type": "string", "description": "投稿者名" },
-        "comment": { "type": "string", "description": "本文" },
-        "is_new": { "type": "boolean", "default": true }
+        "comment": { "type": "string", "description": "本文" }
       },
       "required": ["id", "userId", "name", "comment"]
     }
