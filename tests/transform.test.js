@@ -5,7 +5,7 @@
  * 「正解」として、変換ロジックが仕様に準拠していることを検証します。
  */
 
-import { transformJpnknToOneComme, parsePayload, splitForTTS, shouldProcessMessage } from '../dist/src/transform.js';
+import { transformJpnknToOneComme, parsePayload, shouldProcessMessage } from '../dist/src/transform.js';
 
 describe('transformJpnknToOneComme', () => {
   const defaultOptions = { serviceId: 'test-service-id' };
@@ -356,33 +356,6 @@ describe('parsePayload', () => {
     const result = parsePayload(raw);
 
     expect(result).toBe('これはプレーンテキストです');
-  });
-});
-
-describe('splitForTTS', () => {
-  test('句点で分割される', () => {
-    const text = 'これは1文目です。これは2文目です。';
-
-    const result = splitForTTS(text, 100);
-
-    expect(result).toEqual(['これは1文目です。', 'これは2文目です。']);
-  });
-
-  test('指定サイズを超える場合は分割される', () => {
-    const text = 'あ'.repeat(30);
-
-    const result = splitForTTS(text, 10);
-
-    expect(result.length).toBe(3);
-    expect(result[0].length).toBe(10);
-    expect(result[1].length).toBe(10);
-    expect(result[2].length).toBe(10);
-  });
-
-  test('空文字列の場合は元の空文字列を返す', () => {
-    const result = splitForTTS('', 100);
-
-    expect(result).toEqual(['']);
   });
 });
 

@@ -145,19 +145,3 @@ export function shouldProcessMessage(raw: string): boolean {
     return true;
   }
 }
-
-/**
- * テキストをTTS用に分割する
- */
-export function splitForTTS(text: string, n: number): string[] {
-  const parts = String(text || '')
-    .replace(/\r/g, '')
-    .split(/(?<=[。！？!?。\n])/)
-    .map(s => s.trim())
-    .filter(Boolean);
-  const out: string[] = [];
-  for (const p of parts) {
-    for (let i = 0; i < p.length; i += n) out.push(p.slice(i, i + n));
-  }
-  return out.length ? out : [text];
-}

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import axios from 'axios';
 import mqtt, { type MqttClient } from 'mqtt';
 import store, { type StoreSchema } from './config.js';
-import { transformJpnknToOneComme, parsePayload, shouldProcessMessage, splitForTTS } from './src/transform.js';
+import { transformJpnknToOneComme, parsePayload, shouldProcessMessage } from './src/transform.js';
 import type { JpnknPayload } from './src/transform.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -90,9 +90,8 @@ app.whenReady().then(() => {
   createWindow();
   createTray();
 
-  if (!app.isPackaged) {
-    win?.show();
-  }
+  // 初回起動時は常にウィンドウを表示
+  win?.show();
 
   const openAtLogin = !!store.get('autoStart');
   app.setLoginItemSettings({ openAtLogin, openAsHidden: true });
@@ -142,9 +141,6 @@ function startBridge(): void {
   const trimmed = topicsInput.trim();
   const topic = trimmed.startsWith('bbs/') ? trimmed : `bbs/${trimmed}`;
 
-  const delayMs = Number(store.get('delayMs') ?? 100);
-  const chunkSize = Number(store.get('chunkSize') ?? 120);
-
   sendToRenderer('log', `Connecting ${url} ...`);
 
   client = mqtt.connect(url, {
@@ -155,7 +151,7 @@ function startBridge(): void {
   });
 
   client.on('connect', () => {
-    sendToRenderer('status', { connected: true } as StatusPayload);
+    sendToRenderer('status', '● Connected');
     client!.subscribe(topic, { qos: 0 }, (err) =>
       sendToRenderer('log', err ? `Subscribe failed: ${topic}` : `Subscribed: ${topic}`)
     );
@@ -163,7 +159,7 @@ function startBridge(): void {
 
   client.on('reconnect', () => sendToRenderer('log', 'Reconnecting...'));
   client.on('error', (e: Error) => sendToRenderer('log', `Error: ${e.message}`));
-  client.on('close', () => sendToRenderer('status', { connected: false } as StatusPayload));
+  client.on('close', () => sendToRenderer('status', '● Disconnected'));
 
   client.on('message', async (topic: string, payload: Buffer) => {
     try {
@@ -184,14 +180,10 @@ function startBridge(): void {
       const text = parsePayload(raw);
       sendToRenderer('message', { topic, text } as MessagePayload);
 
-      const chunks = splitForTTS(text, chunkSize);
-      for (const c of chunks) {
-        try {
-          await postToOneComme({ ...parsed, message: c });
-        } catch (e) {
-          sendToRenderer('log', `POST fail: ${(e as Error).message}`);
-        }
-        if (delayMs > 0) await new Promise(r => setTimeout(r, delayMs));
+      try {
+        await postToOneComme(parsed);
+      } catch (e) {
+        sendToRenderer('log', `POST fail: ${(e as Error).message}`);
       }
     } catch (err) {
       sendToRenderer('log', `Handle message error: ${(err as Error)?.message || err}`);
@@ -203,7 +195,7 @@ function stopBridge(): void {
   if (client) {
     try { client.end(true); } catch { }
     client = null;
-    sendToRenderer('status', { connected: false } as StatusPayload);
+    sendToRenderer('status', '● Disconnected');
     sendToRenderer('log', 'Bridge stopped');
   }
 }
@@ -214,8 +206,6 @@ ipcMain.handle('get-config', () => {
     topics: store.get('topics'),
     onecommeBase: store.get('onecommeBase'),
     serviceId: store.get('serviceId'),
-    chunkSize: store.get('chunkSize'),
-    delayMs: store.get('delayMs'),
     autoStart: store.get('autoStart')
   };
 });
@@ -230,8 +220,6 @@ ipcMain.handle('set-config', (_e: IpcMainInvokeEvent, kv: Partial<StoreSchema>) 
     topics: store.get('topics'),
     onecommeBase: store.get('onecommeBase'),
     serviceId: store.get('serviceId'),
-    chunkSize: store.get('chunkSize'),
-    delayMs: store.get('delayMs'),
     autoStart: store.get('autoStart')
   };
 });

@@ -12,8 +12,6 @@ interface AppConfig {
   serviceId: string;
   topics: string;
   onecommeBase: string;
-  chunkSize: number;
-  delayMs: number;
   autoStart: boolean;
 }
 
@@ -21,8 +19,6 @@ const elems = {
   serviceId: document.getElementById('serviceId') as HTMLInputElement,
   topics: document.getElementById('topics') as HTMLInputElement,
   onecommeBase: document.getElementById('onecommeBase') as HTMLInputElement,
-  chunkSize: document.getElementById('chunkSize') as HTMLInputElement,
-  delayMs: document.getElementById('delayMs') as HTMLInputElement,
   autoStart: document.getElementById('autoStart') as HTMLInputElement,
   saveBtn: document.getElementById('saveBtn') as HTMLButtonElement,
   startBtn: document.getElementById('startBtn') as HTMLButtonElement,
@@ -39,8 +35,6 @@ elems.saveBtn?.addEventListener('click', async () => {
     serviceId: elems.serviceId.value.trim(),
     topics: elems.topics.value.trim(),
     onecommeBase: elems.onecommeBase.value.trim(),
-    chunkSize: parseInt(elems.chunkSize.value, 10) || 150,
-    delayMs: parseInt(elems.delayMs.value, 10) || 1000,
     autoStart: elems.autoStart.checked
   };
 
@@ -82,10 +76,12 @@ elems.stopBtn?.addEventListener('click', async () => {
 window.bridge.onStatusUpdate((msg: unknown) => {
   const statusMsg = String(msg);
   elems.status.textContent = statusMsg;
-  if (statusMsg.includes('起動')) {
+  
+  // Update button state based on connection status
+  if (statusMsg.includes('Connected')) {
     running = true;
     updateButtons();
-  } else if (statusMsg.includes('停止')) {
+  } else if (statusMsg.includes('Disconnected')) {
     running = false;
     updateButtons();
   }
@@ -107,8 +103,6 @@ window.bridge.onLog((msg: unknown) => {
     if (cfg.serviceId) elems.serviceId.value = cfg.serviceId;
     if (cfg.topics) elems.topics.value = cfg.topics;
     if (cfg.onecommeBase) elems.onecommeBase.value = cfg.onecommeBase;
-    if (typeof cfg.chunkSize === 'number') elems.chunkSize.value = String(cfg.chunkSize);
-    if (typeof cfg.delayMs === 'number') elems.delayMs.value = String(cfg.delayMs);
     if (typeof cfg.autoStart === 'boolean') elems.autoStart.checked = cfg.autoStart;
   }
   updateButtons();

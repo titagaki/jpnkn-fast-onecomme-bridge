@@ -5,8 +5,6 @@ export interface StoreSchema {
   topics: string;
   onecommeBase: string;
   serviceId: string;
-  chunkSize: number;
-  delayMs: number;
   autoStart: boolean;
 }
 
@@ -14,8 +12,6 @@ const schema = {
   topics: { type: 'string' as const, default: 'mamiko' },
   onecommeBase: { type: 'string' as const, default: 'http://127.0.0.1:11180' },
   serviceId: { type: 'string' as const, default: '' },
-  chunkSize: { type: 'number' as const, default: 120 },
-  delayMs: { type: 'number' as const, default: 100 },
   autoStart: { type: 'boolean' as const, default: false }
 };
 
