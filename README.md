@@ -57,3 +57,9 @@
   * 外部IPから叩く場合は **設定→API** で許可ホスト設定が必要です。
   * WebSocket APIは購読用。書き込みはHTTP APIを使用します。
 * **参考**：HTTP API（公式）、WebSocket API（公式）、フォーラム「POST Send Comment」cURL例。
+
+
+
+## Documentation
+- [Architecture & Sequence Diagram](docs/architecture.md)
+- [AI Development Context](docs/ai-context.md)
