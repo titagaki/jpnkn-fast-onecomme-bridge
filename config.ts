@@ -1,0 +1,28 @@
+// config.ts
+import Store from 'electron-store';
+
+export interface StoreSchema {
+  topics: string;
+  onecommeBase: string;
+  serviceId: string;
+  chunkSize: number;
+  delayMs: number;
+  autoStart: boolean;
+}
+
+const schema = {
+  topics: { type: 'string' as const, default: 'mamiko' },
+  onecommeBase: { type: 'string' as const, default: 'http://127.0.0.1:11180' },
+  serviceId: { type: 'string' as const, default: '' },
+  chunkSize: { type: 'number' as const, default: 120 },
+  delayMs: { type: 'number' as const, default: 100 },
+  autoStart: { type: 'boolean' as const, default: false }
+};
+
+// Use type assertion since electron-store doesn't export proper types
+const store = new Store({ schema, watch: true }) as unknown as {
+  get<K extends keyof StoreSchema>(key: K): StoreSchema[K];
+  set<K extends keyof StoreSchema>(key: K, value: StoreSchema[K]): void;
+};
+
+export default store;

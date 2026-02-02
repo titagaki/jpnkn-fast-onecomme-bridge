@@ -49,16 +49,14 @@
     <label><input id="autoStart" type="checkbox" /> 起動時に自動接続</label>
   </div>
   <div class="row">
-    <button id="save">Save</button>
-    <button id="start">Start</button>
-    <button id="stop">Stop</button>
+    <button id="saveBtn">Save</button>
+    <button id="startBtn">Start</button>
+    <button id="stopBtn">Stop</button>
     <span id="status">● Disconnected</span>
   </div>
 
-  <h3>Messages</h3>
-  <div id="msgs"></div>
   <h3>Log</h3>
   <pre id="log"></pre>
-  <script src="renderer.js"></script>
+  <script type="module" src="../dist/src/renderer.js"></script>
 </body>
 </html>
