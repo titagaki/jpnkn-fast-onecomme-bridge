@@ -140,12 +140,9 @@ npm run mock:onecomme
 
 ## 📚 ドキュメント
 
-### ユーザー向け
+- [アーキテクチャ図・シーケンス図](docs/architecture.md)
 - [jpnkn API 仕様](docs/jpnkn-api-spec.md)
 - [OneComme API 仕様](docs/onecomme-api-spec.md)
-
-### 開発者向け
-- [アーキテクチャ図・シーケンス図](docs/architecture.md)
 - [TypeScript 移行ガイド](docs/typescript-migration.md)
 - [AI 開発コンテキスト](docs/ai-context.md)
 
@@ -172,6 +169,7 @@ Issue や Pull Request は歓迎します。大きな変更の場合は、まず
 
 ## 🔗 関連リンク
 
-- [jpnkn.com](http://jpnkn.com/) - jpnkn 掲示板
-- [OneComme](https://github.com/onecomme/onecomme) - マルチコメントビューア
+- [jpnkn](https://bbs.jpnkn.com/) - jpnkn 掲示板
+- [jpnkn ドキュメント](https://doc.bbs.jpnkn.com/) - jpnkn 開発者向け機能
+- [わんコメ](https://onecomme.com/) - マルチコメントビューア
 - [Electron](https://www.electronjs.org/) - クロスプラットフォーム デスクトップアプリフレームワーク
