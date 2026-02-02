@@ -1,4 +1,4 @@
-# jpnkn Fast → わんコメ Electron ブリッジ
+# jpnkn Fast → わんコメ ブリッジ
 
 **jpnkn の Fast インターフェイス（MQTT）で新着レスを購読し、わんコメ（OneComme）の HTTP API に自動転送する Windows トレイ常駐アプリ**
 
@@ -15,8 +15,6 @@ jpnkn（jpnkn.com）の MQTT ストリームから新着レスを取得し、わ
 - 🔄 **リアルタイム転送**: MQTT 購読 → わんコメ HTTP API へ自動 POST
 - 🎯 **外部コメント対応**: OneComme の `service: external` として挿入
 - 📦 **トレイ常駐**: バックグラウンド動作、システム起動時の自動起動対応
-- 🔧 **TypeScript**: 型安全な開発、保守性の高いコードベース
-- ⚡ **軽量**: Electron ベースで Windows 環境に最適化
 
 ---
 
@@ -69,8 +67,6 @@ npm run build
 | **わんコメ 枠ID（必須）** | 手順1で取得したID | `abc123-def456-...` |
 | **Jpnkn Fast インターフェイス** | 購読する板ID | `mamiko` |
 | **わんコメURL** | OneComme API URL | `http://127.0.0.1:11180` |
-| **分割サイズ** | 長文分割の文字数 | `120` |
-| **送信間隔(ms)** | 分割送信の待機時間 | `100` |
 | **起動時に自動接続** | Windows起動時に自動開始 | ☑ |
 
 設定を保存後、**Start** ボタンをクリックしてブリッジを起動します。
@@ -116,24 +112,11 @@ OneComme HTTP API (127.0.0.1:11180)
 
 ### プロジェクト構成
 
-```
-jpnkn-fast-onecomme-bridge/
-├── main.ts              # Electronメインプロセス
-├── preload.ts           # IPC ブリッジ (CommonJS)
-├── config.ts            # 設定ストア
-├── src/
-│   ├── transform.ts     # データ変換ロジック
-│   ├── renderer.ts      # UI ロジック
-│   └── index.html       # 設定画面UI
-├── tests/
-│   ├── transform.test.js        # 単体テスト
-│   ├── mock-mqtt-broker.js      # MQTT モック
-│   └── mock-onecomme-server.js  # OneComme API モック
-└── docs/
-    ├── architecture.md          # アーキテクチャ図
-    ├── typescript-migration.md  # TypeScript移行ガイド
-    └── ai-context.md            # AI開発コンテキスト
-```
+- `main.ts` - メインプロセス（MQTT購読・わんコメへ送信）
+- `src/transform.ts` - jpnkn → わんコメ データ変換
+- `src/renderer.ts` - 設定画面UI
+- `tests/` - 単体テスト・モックサーバー
+- `docs/` - 技術ドキュメント
 
 ---
 
@@ -157,20 +140,21 @@ npm run mock:onecomme
 
 ## 📚 ドキュメント
 
+### ユーザー向け
+- [jpnkn API 仕様](docs/jpnkn-api-spec.md)
+- [OneComme API 仕様](docs/onecomme-api-spec.md)
+
+### 開発者向け
 - [アーキテクチャ図・シーケンス図](docs/architecture.md)
 - [TypeScript 移行ガイド](docs/typescript-migration.md)
 - [AI 開発コンテキスト](docs/ai-context.md)
-- [jpnkn API 仕様](docs/jpnkn-api-spec.md)
-- [OneComme API 仕様](docs/onecomme-api-spec.md)
 
 ---
 
 ## 💡 使用上の注意
 
-- **外部IP からのアクセス**: わんコメの設定で許可ホストを追加してください
-- **枠ID の取得**: 配信枠ごとに異なるため、コメント欄右クリックで毎回確認
-- **長文の自動分割**: 指定文字数で分割され、指定間隔で順次送信されます
-- **トレイ常駐**: ウィンドウを閉じてもバックグラウンドで動作します（終了は右クリックメニューから）
+- **枠IDの取得**: 配信枠ごとに異なるため、わんコメのコメント欄を右クリック → 「IDをコピー」で毎回確認してください
+- **トレイ常駐**: ウィンドウを閉じてもバックグラウンドで動作します。完全終了は右クリックメニューから「終了」を選択してください
 
 ---
 
