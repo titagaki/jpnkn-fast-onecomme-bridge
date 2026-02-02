@@ -3,7 +3,7 @@ import Store from 'electron-store';
 
 // jpnkn-api-spec.md: brokerUrl, username, password は固定値のため設定不要
 const schema = {
-  topics:      { type: 'string', default: 'bbs/#' },
+  topics:      { type: 'string', default: 'mamiko' },
   onecommeBase:{ type: 'string', default: 'http://127.0.0.1:11180' },
   serviceId:   { type: 'string', default: '' },
   chunkSize:   { type: 'number', default: 120 },

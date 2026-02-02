@@ -5,7 +5,7 @@ const $ = (id) => document.getElementById(id);
 
 function setForm(cfg) {
   // jpnkn-api-spec.md: brokerUrl, username, password は固定値のため入力不要
-  $('topics').value       = cfg.topics || 'bbs/#';
+  $('topics').value       = cfg.topics || 'mamiko';
   $('onecommeBase').value = cfg.onecommeBase || 'http://127.0.0.1:11180';
   $('serviceId').value    = cfg.serviceId || '';
   $('chunkSize').value    = cfg.chunkSize ?? 120;

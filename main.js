@@ -147,7 +147,15 @@ function startBridge() {
   const url = 'mqtt://bbs.jpnkn.com:1883';
   const username = 'genkai';
   const password = '7144';
-  const topics = (store.get('topics') || 'bbs/#').split(',').map(s => s.trim()).filter(Boolean);
+  
+  // トピックの処理: ユーザーが入力した板IDを bbs/板ID 形式に変換
+  const topicsInput = store.get('topics') || 'bbs/#';
+  const topics = topicsInput.split(',').map(s => {
+    const trimmed = s.trim();
+    // 既に bbs/ で始まっている場合はそのまま、そうでなければ bbs/ を追加
+    return trimmed.startsWith('bbs/') ? trimmed : `bbs/${trimmed}`;
+  }).filter(Boolean);
+  
   const delayMs = Number(store.get('delayMs') ?? 100);
   const chunkSize = Number(store.get('chunkSize') ?? 120);
 
