@@ -1,17 +1,35 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "JpnknMqttPayload",
+  "description": "jpnkn MQTTの実際のペイロード形式",
   "type": "object",
   "properties": {
-    "board": { "type": "string", "description": "板ID" },
-    "thread": { "type": "string", "description": "スレッドID" },
-    "num": { "type": "integer", "description": "レス番号" },
-    "name": { "type": "string", "description": "投稿者名" },
-    "mail": { "type": "string", "description": "メール欄" },
-    "date": { "type": "string", "description": "投稿日時文字列" },
-    "id": { "type": "string", "description": "ユーザーID" },
-    "message": { "type": "string", "description": "レス本文" },
-    "is_new": { "type": "boolean", "description": "新着フラグ" }
+    "body": {
+      "type": "string",
+      "description": "<>で区切られたデータ：名前<>メール<>日時<>本文<>",
+      "pattern": "^[^<>]*(<>[^<>]*){3,}$"
+    },
+    "no": {
+      "type": "string",
+      "description": "レス番号（文字列形式）"
+    },
+    "bbsid": {
+      "type": "string",
+      "description": "板ID (mamiko, livejupiter等)"
+    },
+    "threadkey": {
+      "type": "string",
+      "description": "スレッドキー（UNIXタイムスタンプ）"
+    }
   },
-  "required": ["board", "thread", "num", "message", "is_new"]
+  "required": ["body", "no", "bbsid", "threadkey"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "body": "名無しさん<>sage<>2026/02/03(火) 00:11:43.89<>確定申告をはじめましょう<>",
+      "no": "498",
+      "bbsid": "mamiko",
+      "threadkey": "1769773535"
+    }
+  ]
 }
