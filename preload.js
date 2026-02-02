@@ -1,4 +1,5 @@
-import { contextBridge, ipcRenderer } from 'electron';
+// preload.js - CommonJS形式（Electronのpreloadスクリプトはsandbox環境）
+const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('bridge', {
   getConfig: () => ipcRenderer.invoke('get-config'),

@@ -40,12 +40,29 @@ function createWindow() {
     }
   });
   win.loadFile(path.join(__dirname, 'src', 'index.html'));
+  
+  // 閉じるボタンでhide（トレイ常駐）
+  win.on('close', (e) => {
+    if (!app.isQuitting) {
+      e.preventDefault();
+      win.hide();
+    }
+  });
 }
 
 function createTray() {
-  // アイコンは src/icon.ico（無ければ適当なPNGに差し替えてOK）
+  // アイコンは src/icon.ico（なければデフォルト16x16アイコンを生成）
   const iconPath = path.join(__dirname, 'src', 'icon.ico');
-  const icon = nativeImage.createFromPath(iconPath);
+  let icon;
+  try {
+    icon = nativeImage.createFromPath(iconPath);
+    if (icon.isEmpty()) throw new Error('Icon is empty');
+  } catch {
+    // デフォルトアイコン（16x16 緑色の四角）
+    icon = nativeImage.createFromBuffer(
+      Buffer.from('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAH0lEQVQ4T2NkYGD4z0ABYBw1YDQMqCMM/tMqDEbDAACCtwQRwQILywAAAABJRU5ErkJggg==', 'base64')
+    );
+  }
   tray = new Tray(icon);
   const menu = Menu.buildFromTemplate([
     { label: 'Open', click: () => { win.show(); win.focus(); } },
@@ -63,6 +80,11 @@ function createTray() {
 app.whenReady().then(() => {
   createWindow();
   createTray();
+  
+  // 開発時はウィンドウを表示
+  if (!app.isPackaged) {
+    win.show();
+  }
 
   // ログイン時自動起動（設定に追従）
   const openAtLogin = !!store.get('autoStart');
@@ -142,6 +164,13 @@ async function postToOneComme(jpnknData) {
 // --- Bridge 本体 ---
 function startBridge() {
   stopBridge(); // 多重起動防止
+
+  // Service IDの検証
+  const serviceId = store.get('serviceId');
+  if (!serviceId) {
+    sendToRenderer('log', 'Error: わんコメ枠IDが未設定です。設定を保存してからStartしてください。');
+    return;
+  }
 
   // jpnkn-api-spec.md: 接続情報は固定値
   const url = 'mqtt://bbs.jpnkn.com:1883';
@@ -242,5 +271,6 @@ ipcMain.handle('stop',  async () => { stopBridge();  return true; });
 
 // --- 終了処理 ---
 app.on('before-quit', () => {
+  app.isQuitting = true;
   stopBridge();
 });

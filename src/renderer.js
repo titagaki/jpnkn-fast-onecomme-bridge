@@ -55,6 +55,16 @@ function pushMsg(item) {
     log('Saved settings');
   };
   $('start').onclick = async () => {
+    // Service ID検証
+    const serviceId = $('serviceId').value.trim();
+    if (!serviceId) {
+      log('Error: わんコメ枠IDは必須です');
+      $('serviceId').focus();
+      return;
+    }
+    // 保存してから開始
+    const kv = getForm();
+    await window.bridge.setConfig(kv);
     await window.bridge.start();
     log('Start requested');
   };
