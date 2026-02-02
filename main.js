@@ -110,24 +110,29 @@ function parsePayload(raw) {
   }
 }
 
-async function postToOneComme(text) {
+async function postToOneComme(jpnknData) {
   const base = (store.get('onecommeBase') || 'http://127.0.0.1:11180').replace(/\/$/, '');
   const serviceId = store.get('serviceId');
-  const name = store.get('authorName')   || 'jpnkn';
-  const userId = store.get('authorUserId') || 'jpnkn:bridge';
 
   if (!serviceId) {
     sendToRenderer('log', 'Service ID が未設定のため送信をスキップしました');
     return;
   }
 
+  // jpnknペイロードからnameとidを取得（仕様書準拠）
+  const name = jpnknData.name || '名無し';
+  const userId = jpnknData.id || 'jpnkn:anonymous';
+  const commentId = jpnknData.board && jpnknData.thread && jpnknData.num !== undefined
+    ? `jpnkn:${jpnknData.board}:${jpnknData.thread}:${jpnknData.num}`
+    : `ext-${Date.now()}-${Math.floor(Math.random()*1e6)}`;
+
   const body = {
     service: { id: serviceId },
     comment: {
-      id: `ext-${Date.now()}-${Math.floor(Math.random()*1e6)}`,
+      id: commentId,
       userId,
       name,
-      comment: text
+      comment: jpnknData.text
     }
   };
 
@@ -138,17 +143,13 @@ async function postToOneComme(text) {
 function startBridge() {
   stopBridge(); // 多重起動防止
 
-  const url       = store.get('brokerUrl');
-  const username  = store.get('username');
-  const password  = store.get('password');
-  const topics    = (store.get('topics') || 'bbs/#').split(',').map(s => s.trim()).filter(Boolean);
-  const delayMs   = Number(store.get('delayMs') ?? 100);
+  // jpnkn-api-spec.md: 接続情報は固定値
+  const url = 'mqtt://bbs.jpnkn.com:1883';
+  const username = 'genkai';
+  const password = '7144';
+  const topics = (store.get('topics') || 'bbs/#').split(',').map(s => s.trim()).filter(Boolean);
+  const delayMs = Number(store.get('delayMs') ?? 100);
   const chunkSize = Number(store.get('chunkSize') ?? 120);
-
-  if (!url) {
-    sendToRenderer('log', 'Broker URL が未設定です。設定画面から入力してください。');
-    return;
-  }
 
   sendToRenderer('log', `Connecting ${url} ...`);
 
@@ -177,14 +178,16 @@ function startBridge() {
       if (!raw) return;
 
       // jpnkn-api-spec.md: is_new: true のメッセージのみを対象とする
+      let parsed;
       try {
-        const parsed = JSON.parse(raw);
+        parsed = JSON.parse(raw);
         if (parsed.is_new === false) {
           sendToRenderer('log', `Skipped (is_new=false): No.${parsed.num || '?'}`);
           return;
         }
       } catch {
         // JSON解析失敗時は処理を続行（プレーンテキストの可能性）
+        parsed = {};
       }
 
       const text = parsePayload(raw);
@@ -193,7 +196,8 @@ function startBridge() {
       const chunks = splitForTTS(text, chunkSize);
       for (const c of chunks) {
         try {
-          await postToOneComme(c);
+          // jpnknペイロードの情報を渡す
+          await postToOneComme({ ...parsed, text: c });
         } catch (e) {
           sendToRenderer('log', `POST fail: ${e.message}`);
         }

@@ -4,14 +4,10 @@ const $ = (id) => document.getElementById(id);
 /** ---- フォーム ↔ 設定Store の橋渡し ---- **/
 
 function setForm(cfg) {
-  $('brokerUrl').value    = cfg.brokerUrl || '';
+  // jpnkn-api-spec.md: brokerUrl, username, password は固定値のため入力不要
   $('topics').value       = cfg.topics || 'bbs/#';
-  $('username').value     = cfg.username || '';
-  $('password').value     = cfg.password || '';
   $('onecommeBase').value = cfg.onecommeBase || 'http://127.0.0.1:11180';
   $('serviceId').value    = cfg.serviceId || '';
-  $('authorName').value   = cfg.authorName || 'jpnkn';
-  $('authorUserId').value = cfg.authorUserId || 'jpnkn:bridge';
   $('chunkSize').value    = cfg.chunkSize ?? 120;
   $('delayMs').value      = cfg.delayMs ?? 100;
   $('autoStart').checked  = !!cfg.autoStart;
@@ -19,14 +15,10 @@ function setForm(cfg) {
 
 function getForm() {
   return {
-    brokerUrl:    $('brokerUrl').value.trim(),
+    // jpnkn-api-spec.md: 固定値は保存不要（main.jsで設定）
     topics:       $('topics').value.trim(),
-    username:     $('username').value.trim(),
-    password:     $('password').value,
     onecommeBase: $('onecommeBase').value.trim(),
     serviceId:    $('serviceId').value.trim(),
-    authorName:   $('authorName').value.trim(),
-    authorUserId: $('authorUserId').value.trim(),
     chunkSize:    parseInt($('chunkSize').value, 10) || 120,
     delayMs:      parseInt($('delayMs').value, 10) || 100,
     autoStart:    $('autoStart').checked
