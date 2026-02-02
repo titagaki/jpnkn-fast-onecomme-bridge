@@ -98,11 +98,12 @@ function splitForTTS(text, n) {
 
 function parsePayload(raw) {
   // jpnkn Fast のメッセージが JSON なら本文を整形。素テキストならそのまま。
+  // フィールド名は jpnkn-api-spec.md に準拠: num, message
   try {
     const j = JSON.parse(raw);
-    const no   = j.no   ? `No.${j.no} ` : '';
+    const no   = j.num  ? `No.${j.num} ` : '';
     const name = j.name ? `${j.name} > ` : '';
-    const msg  = j.msg  ?? raw;
+    const msg  = j.message ?? raw;
     return `${no}${name}${msg}`;
   } catch {
     return raw;
@@ -174,6 +175,17 @@ function startBridge() {
     try {
       const raw = payload.toString('utf8').trim();
       if (!raw) return;
+
+      // jpnkn-api-spec.md: is_new: true のメッセージのみを対象とする
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed.is_new === false) {
+          sendToRenderer('log', `Skipped (is_new=false): No.${parsed.num || '?'}`);
+          return;
+        }
+      } catch {
+        // JSON解析失敗時は処理を続行（プレーンテキストの可能性）
+      }
 
       const text = parsePayload(raw);
       sendToRenderer('message', { topic, text });

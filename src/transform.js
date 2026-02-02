@@ -62,18 +62,38 @@ export function transformJpnknToOneComme(jpnknPayload, options = {}) {
 
 /**
  * jpnknペイロードの生テキストを整形する（表示用）
+ * フィールド名は jpnkn-api-spec.md に準拠: num, message
  * @param {string} raw - 生のペイロード文字列
  * @returns {string} 整形されたテキスト
  */
 export function parsePayload(raw) {
   try {
     const j = JSON.parse(raw);
-    const no = j.num ? `No.${j.num} ` : (j.no ? `No.${j.no} ` : '');
+    // jpnkn-api-spec.md 準拠: num, message のみ使用
+    const no = j.num ? `No.${j.num} ` : '';
     const name = j.name ? `${j.name} > ` : '';
-    const msg = j.message ?? j.msg ?? raw;
+    const msg = j.message ?? raw;
     return `${no}${name}${msg}`;
   } catch {
     return raw;
+  }
+}
+
+/**
+ * jpnknメッセージが処理対象かどうかを判定する
+ * jpnkn-api-spec.md: is_new: true のメッセージのみを処理対象とする
+ * @param {string} raw - 生のペイロード文字列
+ * @returns {boolean} 処理対象ならtrue
+ */
+export function shouldProcessMessage(raw) {
+  try {
+    const j = JSON.parse(raw);
+    // is_new が明示的に false の場合のみスキップ
+    // 未定義やtrue、またはJSONでない場合は処理対象
+    return j.is_new !== false;
+  } catch {
+    // JSONパース失敗時は処理対象とする（プレーンテキストの可能性）
+    return true;
   }
 }
 

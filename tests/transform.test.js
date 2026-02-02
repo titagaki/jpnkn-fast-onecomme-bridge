@@ -1,8 +1,11 @@
 /**
  * jpnkn → わんコメ 変換ロジックのユニットテスト
+ * 
+ * 本テストは docs/jpnkn-api-spec.md および docs/schema-jpnkn.json を
+ * 「正解」として、変換ロジックが仕様に準拠していることを検証します。
  */
 
-import { transformJpnknToOneComme, parsePayload, splitForTTS } from '../src/transform.js';
+import { transformJpnknToOneComme, parsePayload, splitForTTS, shouldProcessMessage } from '../src/transform.js';
 
 describe('transformJpnknToOneComme', () => {
   const defaultOptions = { serviceId: 'test-service-id' };
@@ -440,5 +443,176 @@ describe('splitForTTS', () => {
     const result = splitForTTS('', 100);
 
     expect(result).toEqual(['']);
+  });
+});
+
+/**
+ * jpnkn-api-spec.md 準拠テスト
+ * 
+ * 以下の仕様に準拠していることを検証:
+ * - フィールド名: num (not no), message (not msg)
+ * - is_new: true のメッセージのみを処理対象とする
+ */
+describe('jpnkn-api-spec.md 準拠テスト', () => {
+  describe('フィールド名の準拠', () => {
+    test('parsePayloadはjpnkn仕様のnumフィールドを使用する', () => {
+      // jpnkn-api-spec.md: "num": レス番号（integer）
+      const jpnknPayload = {
+        board: 'news',
+        thread: '12345',
+        num: 42,  // 正しいフィールド名
+        name: 'テスター',
+        message: 'テストメッセージ',
+        is_new: true
+      };
+
+      const result = parsePayload(JSON.stringify(jpnknPayload));
+      expect(result).toBe('No.42 テスター > テストメッセージ');
+    });
+
+    test('parsePayloadは旧フィールド名noを使用しない', () => {
+      // 旧フィールド名noは無視されるべき
+      const oldStylePayload = {
+        no: 99,  // 旧フィールド名（仕様外）
+        name: 'テスター',
+        message: 'テストメッセージ'
+      };
+
+      const result = parsePayload(JSON.stringify(oldStylePayload));
+      // numがないのでNo.は表示されない
+      expect(result).toBe('テスター > テストメッセージ');
+      expect(result).not.toContain('No.99');
+    });
+
+    test('parsePayloadはjpnkn仕様のmessageフィールドを使用する', () => {
+      // jpnkn-api-spec.md: "message": レス本文（string）
+      const jpnknPayload = {
+        num: 1,
+        message: '正しいメッセージ'  // 正しいフィールド名
+      };
+
+      const result = parsePayload(JSON.stringify(jpnknPayload));
+      expect(result).toContain('正しいメッセージ');
+    });
+
+    test('parsePayloadは旧フィールド名msgを使用しない', () => {
+      // 旧フィールド名msgは無視されるべき
+      const oldStylePayload = {
+        num: 1,
+        msg: '旧形式メッセージ'  // 旧フィールド名（仕様外）
+      };
+
+      const result = parsePayload(JSON.stringify(oldStylePayload));
+      // messageがないので元のJSONがそのまま返される
+      expect(result).not.toBe('No.1 旧形式メッセージ');
+    });
+  });
+
+  describe('is_new フィルタリング（実装上の注意点）', () => {
+    test('is_new: true のメッセージは処理対象', () => {
+      const payload = JSON.stringify({
+        board: 'news',
+        thread: '12345',
+        num: 1,
+        message: 'テスト',
+        is_new: true
+      });
+
+      expect(shouldProcessMessage(payload)).toBe(true);
+    });
+
+    test('is_new: false のメッセージは処理対象外', () => {
+      // jpnkn-api-spec.md: is_new: true のメッセージを対象として処理を行う
+      const payload = JSON.stringify({
+        board: 'news',
+        thread: '12345',
+        num: 1,
+        message: 'テスト',
+        is_new: false
+      });
+
+      expect(shouldProcessMessage(payload)).toBe(false);
+    });
+
+    test('is_new が未定義の場合は処理対象（デフォルトtrue扱い）', () => {
+      const payload = JSON.stringify({
+        board: 'news',
+        thread: '12345',
+        num: 1,
+        message: 'テスト'
+        // is_new is not defined
+      });
+
+      expect(shouldProcessMessage(payload)).toBe(true);
+    });
+
+    test('JSONでないプレーンテキストは処理対象', () => {
+      const plainText = 'これはプレーンテキストです';
+      expect(shouldProcessMessage(plainText)).toBe(true);
+    });
+  });
+
+  describe('schema-jpnkn.json 必須フィールドの検証', () => {
+    // schema-jpnkn.json: required: ["board", "thread", "num", "message", "is_new"]
+    
+    test('必須フィールドがすべて揃ったペイロードを正しく処理', () => {
+      const completePayload = {
+        board: 'news',
+        thread: '1234567890',
+        num: 100,
+        message: 'テストメッセージです',
+        is_new: true
+      };
+
+      const result = transformJpnknToOneComme(completePayload, { serviceId: 'test' });
+      
+      expect(result.comment.id).toBe('jpnkn:news:1234567890:100');
+      expect(result.comment.comment).toBe('テストメッセージです');
+    });
+
+    test('オプションフィールド（name, id, mail, date）がなくても動作', () => {
+      // schema-jpnkn.json では name, id, mail, date は required ではない
+      const minimalPayload = {
+        board: 'test',
+        thread: '999',
+        num: 1,
+        message: 'minimal message',
+        is_new: true
+      };
+
+      const result = transformJpnknToOneComme(minimalPayload, { serviceId: 'test' });
+      
+      expect(result.comment.comment).toBe('minimal message');
+      expect(result.comment.name).toBe('名無し');  // デフォルト値
+      expect(result.comment.userId).toBe('jpnkn:anonymous');  // デフォルト値
+    });
+  });
+
+  describe('schema-onecomme.json 出力形式の検証', () => {
+    // schema-onecomme.json: service.id, comment.id, userId, name, comment が必須
+    
+    test('出力にservice.idが含まれる', () => {
+      const payload = {
+        board: 'test', thread: '1', num: 1, message: 'test', is_new: true
+      };
+      const result = transformJpnknToOneComme(payload, { serviceId: 'my-service' });
+      
+      expect(result.service).toBeDefined();
+      expect(result.service.id).toBe('my-service');
+    });
+
+    test('出力にcomment必須フィールドがすべて含まれる', () => {
+      const payload = {
+        board: 'test', thread: '1', num: 1, message: 'test message', 
+        name: 'tester', id: 'USER123', is_new: true
+      };
+      const result = transformJpnknToOneComme(payload, { serviceId: 'test' });
+      
+      expect(result.comment.id).toBeDefined();
+      expect(typeof result.comment.id).toBe('string');
+      expect(result.comment.userId).toBe('USER123');
+      expect(result.comment.name).toBe('tester');
+      expect(result.comment.comment).toBe('test message');
+    });
   });
 });
