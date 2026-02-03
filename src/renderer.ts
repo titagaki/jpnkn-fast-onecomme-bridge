@@ -58,6 +58,15 @@ elems.startBtn?.addEventListener('click', async () => {
     return;
   }
 
+  // 起動前に現在の設定を保存
+  const cfg: AppConfig = {
+    serviceId: elems.serviceId.value.trim(),
+    topics: elems.topics.value.trim(),
+    onecommeBase: elems.onecommeBase.value.trim(),
+    autoStart: elems.autoStart.checked
+  };
+  await window.bridge.saveConfig(cfg as unknown as Record<string, unknown>);
+
   appendLog('🔄 ブリッジを起動しています...');
   await window.bridge.start();
 });

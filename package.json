@@ -42,6 +42,7 @@
     "files": [
       "dist/**",
       "src/**",
+      "build/**",
       "package.json"
     ],
     "asar": true
