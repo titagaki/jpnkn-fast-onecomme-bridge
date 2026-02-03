@@ -38,14 +38,14 @@ npm run dev
 
 トレイにアイコンが表示されたら成功です。
 
-### インストーラーのビルド
+### 実行ファイルのビルド
 
 ```bash
-# Windows インストーラー (.exe) を生成
-npm run build
+# Windows portable版 (.exe) を生成
+ npm run build
 ```
 
-`dist/` フォルダに NSIS インストーラーが作成されます。
+`dist/` フォルダに portable 実行ファイルが作成されます。インストール不要で、ダブルクリックで即起動できます。
 
 ---
 

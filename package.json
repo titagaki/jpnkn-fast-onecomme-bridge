@@ -8,7 +8,7 @@
     "clean": "rimraf dist",
     "build:ts": "tsc && tsc -p tsconfig.preload.json",
     "dev": "npm run build:ts && electron .",
-    "build": "npm run clean && npm run build:ts && electron-builder",
+    "build": "npm run clean && npm run build:ts && electron-builder --win portable --x64",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:e2e": "node tests/e2e-test.js",
     "mock:mqtt": "node tests/mock-mqtt-broker.js",
@@ -32,20 +32,13 @@
   },
   "build": {
     "appId": "com.example.jpnkn-onecomme-bridge",
-    "productName": "jpnkn Fast OneComme Bridge",
+    "productName": "jpnkn-fast-onecomme-bridge",
     "win": {
-      "target": [
-        "nsis"
-      ],
-      "requestedExecutionLevel": "asInvoker",
-      "icon": "src/icon.ico"
+      "target": "portable",
+      "icon": "build/icon.ico"
     },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "runAfterFinish": true
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.exe"
     },
     "files": [
       "dist/**",
