@@ -2,49 +2,226 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>jpnkn Fast → わんコメ</title>
+  <title>JPNKNのレスをわんコメに送るやつ</title>
   <style>
-    body { font-family: system-ui, sans-serif; margin: 16px; }
-    input, button { font-size: 14px; }
-    label { display:block; margin-top:8px; }
-    #log { height: 200px; overflow: auto; background:#111; color:#0f0; padding:8px; }
-    #msgs { height: 260px; overflow:auto; border:1px solid #ccc; padding:8px; }
-    .row { display:flex; gap:8px; align-items:center; }
-    .row > * { flex:1; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #2a2d35;
+      color: #e0e0e0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      background: #1e2127;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      border: 1px solid #3a3d45;
+    }
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #fff;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+    h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 4px 0 14px 0;
+      color: #7eb8da;
+      border-bottom: 2px solid #4a5568;
+      padding-bottom: 8px;
+    }
+    h3:not(:first-of-type) {
+      margin-top: 24px;
+    }
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      color: #b8b8b8;
+      font-weight: 500;
+    }
+    .label-required {
+      font-weight: 700;
+      color: #e8e8e8;
+      font-size: 15px;
+    }
+    .settings-box {
+      border: 1px solid #4a5568;
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 18px;
+      background: #252930;
+    }
+    input[type="text"], input[type="url"] {
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 15px;
+      background: #1a1d23;
+      border: 1px solid #4a5568;
+      border-radius: 6px;
+      color: #fff;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+    input[type="text"]:focus, input[type="url"]:focus {
+      border-color: #7eb8da;
+      background: #1e2127;
+      box-shadow: 0 0 0 3px rgba(126, 184, 218, 0.15);
+    }
+    input::placeholder { color: #666; }
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      cursor: pointer;
+      accent-color: #4fc3f7;
+    }
+    .field { margin-bottom: 17px; }
+    .field small {
+      display: block;
+      margin-top: 5px;
+      color: #888;
+      font-size: 13px;
+    }
+    .inline-input-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 7px;
+    }
+    .inline-input-group span { color: #b0b0b0; font-size: 14px; }
+    .inline-input-group input {
+      width: 150px;
+      padding: 9px 12px;
+      font-size: 14px;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 16px;
+    }
+    button {
+      width: 100px;
+      padding: 11px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    #saveBtn {
+      background: #5865a8;
+      color: #fff;
+    }
+    #saveBtn:hover { background: #6875bb; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(88, 101, 168, 0.4); }
+    #startBtn {
+      background: #3d9970;
+      color: #fff;
+    }
+    #startBtn:hover { background: #49b17f; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(61, 153, 112, 0.4); }
+    #stopBtn {
+      background: #c94c4c;
+      color: #fff;
+    }
+    #stopBtn:hover { background: #d85c5c; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(201, 76, 76, 0.4); }
+    button:active { transform: translateY(0); }
+    #status {
+      flex: 0 0 auto;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 8px;
+      background: rgba(201, 76, 76, 0.2);
+      color: #e58585;
+      border: 2px solid #c94c4c;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 10px rgba(201, 76, 76, 0.2);
+      transition: all 0.3s ease;
+    }
+    #status.connected {
+      background: rgba(61, 153, 112, 0.2);
+      color: #6bc99a;
+      border-color: #3d9970;
+      box-shadow: 0 0 15px rgba(61, 153, 112, 0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(61, 153, 112, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(61, 153, 112, 0.5); }
+    }
+    #log {
+      height: 220px;
+      overflow: auto;
+      background: #0d0d0d;
+      color: #7bc96f;
+      padding: 14px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      border: 1px solid #4a5568;
+    }
+    #log::-webkit-scrollbar { width: 8px; }
+    #log::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 4px; }
+    #log::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    #log::-webkit-scrollbar-thumb:hover { background: #444; }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      margin-top: 8px;
+      color: #d0d0d0;
+    }
   </style>
 </head>
 <body>
-  <h2>jpnkn Fast → わんコメ</h2>
-  
-  <h3>設定</h3>
-  <div class="row">
-    <label>わんコメ 枠ID（必須）
-      <input id="serviceId" placeholder="わんコメで右クリック→IDをコピー" required />
-    </label>
-  </div>
-  <div class="row">
-    <label><strong>Jpnkn Fastインターフェース(β)</strong><br>
-      http://bbs.jpnkn.com/<input id="topics" placeholder="mamiko" style="width: 150px; display: inline;" />/beta/fast
-      <br><small>板IDを入力してください（必須）</small>
-    </label>
-  </div>
-  <div class="row">
-    <label><strong>わんコメURL（必須）</strong><br>
-      <input id="onecommeBase" placeholder="http://127.0.0.1:11180" />
-    </label>
-  </div>
-  <div class="row">
-    <label><input id="autoStart" type="checkbox" /> 起動時に自動接続</label>
-  </div>
-  <div class="row">
-    <button id="saveBtn">Save</button>
-    <button id="startBtn">Start</button>
-    <button id="stopBtn">Stop</button>
-    <span id="status">● Disconnected</span>
-  </div>
+  <div class="container">
+    <h3>⚙️ 設定</h3>
+    <div class="settings-box">
+      <div class="field">
+        <label class="label-required">わんコメ 枠ID（必須）</label>
+        <input type="text" id="serviceId" placeholder="わんコメで右クリック→IDをコピー" required />
+      </div>
+      <div class="field">
+        <label class="label-required">jpnkn Fast インターフェース 板ID（必須）</label>
+        <div class="inline-input-group">
+          <span>http://bbs.jpnkn.com/</span>
+          <input type="text" id="topics" placeholder="mamiko" style="width: 120px;" />
+          <span>/beta/fast</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label-required">わんコメURL（必須）</label>
+        <input type="url" id="onecommeBase" placeholder="http://127.0.0.1:11180" />
+      </div>
+      <div class="field">
+        <label class="checkbox-label">
+          <input id="autoStart" type="checkbox" />
+          起動時に自動接続
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <button id="saveBtn">💾 Save</button>
+      <button id="startBtn">▶ Start</button>
+      <button id="stopBtn">⏹ Stop</button>
+      <span id="status">● Disconnected</span>
+    </div>
 
-  <h3>Log</h3>
-  <pre id="log"></pre>
+    <h3>📋 Log</h3>
+    <pre id="log"></pre>
+  </div>
   <script type="module" src="../dist/src/renderer.js"></script>
 </body>
 </html>

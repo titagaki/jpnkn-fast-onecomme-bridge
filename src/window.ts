@@ -18,9 +18,11 @@ export function getWindow(): BrowserWindow | null {
 
 export function createWindow(dirname: string): BrowserWindow {
   win = new BrowserWindow({
-    width: 860,
-    height: 640,
+    width: 680,
+    height: 800,
     show: false,
+    resizable: true,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(dirname, 'preload.js'),
       contextIsolation: true,
@@ -28,6 +30,7 @@ export function createWindow(dirname: string): BrowserWindow {
     }
   });
   win.loadFile(path.join(dirname, '..', 'src', 'index.html'));
+  win.removeMenu();
 
   win.on('close', (e) => {
     if (!isQuitting) {

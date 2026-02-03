@@ -80,9 +80,11 @@ window.bridge.onStatusUpdate((msg: unknown) => {
   // Update button state based on connection status
   if (statusMsg.includes('Connected')) {
     running = true;
+    elems.status.classList.add('connected');
     updateButtons();
   } else if (statusMsg.includes('Disconnected')) {
     running = false;
+    elems.status.classList.remove('connected');
     updateButtons();
   }
 });

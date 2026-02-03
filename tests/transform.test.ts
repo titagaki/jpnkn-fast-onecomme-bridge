@@ -5,7 +5,7 @@
  * 「正解」として、変換ロジックが仕様に準拠していることを検証します。
  */
 
-import { transformJpnknToOneComme, parsePayload } from '../dist/src/transform.js';
+import { transformJpnknToOneComme, parsePayload } from '../src/transform.js';
 import type { JpnknPayload, TransformOptions } from '../src/transform.js';
 
 describe('transformJpnknToOneComme - 新形式', () => {
