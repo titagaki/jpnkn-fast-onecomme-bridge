@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import axios from 'axios';
 import mqtt, { type MqttClient } from 'mqtt';
 import store, { type StoreSchema } from './config.js';
-import { transformJpnknToOneComme, parsePayload, shouldProcessMessage } from './src/transform.js';
+import { transformJpnknToOneComme, parsePayload } from './src/transform.js';
 import type { JpnknPayload } from './src/transform.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -166,16 +166,7 @@ function startBridge(): void {
       const raw = payload.toString('utf8').trim();
       if (!raw) return;
 
-      let parsed: JpnknPayload;
-      try {
-        parsed = JSON.parse(raw) as JpnknPayload;
-        if (parsed.is_new === false) {
-          sendToRenderer('log', `Skipped (is_new=false): No.${parsed.num || '?'}`);
-          return;
-        }
-      } catch {
-        parsed = {};
-      }
+      const parsed: JpnknPayload = JSON.parse(raw) as JpnknPayload;
 
       const text = parsePayload(raw);
       sendToRenderer('message', { topic, text } as MessagePayload);
