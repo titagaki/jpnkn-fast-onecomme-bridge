@@ -1,4 +1,4 @@
-# jpnkn Fast → わんコメ ブリッジ
+# JPNKNのレスをわんコメに送るやつ
 
 **jpnkn の Fast インターフェイス（MQTT）で新着レスを購読し、わんコメ（OneComme）の HTTP API に自動転送する Windows トレイ常駐アプリ**
 
@@ -8,7 +8,7 @@
 
 ## 📋 概要
 
-jpnkn（jpnkn.com）の MQTT ストリームから新着レスを取得し、わんコメ（OneComme）に外部コメントとして自動投稿します。配信中にリアルタイムで掲示板のコメントを表示・読み上げできます。
+jpnkn（jpnkn.com）の MQTT ストリームから新着レスを取得し、わんコメ（OneComme）に外部コメントとして自動投稿します。
 
 ### 主な機能
 
@@ -119,26 +119,30 @@ OneComme HTTP API (127.0.0.1:11180)
 - `src/onecomme-client.ts` - わんコメAPI呼び出し
 - `src/transform.ts` - データ変換
 - `src/ipc-handlers.ts` - IPCハンドラー
-- `tests/` - 単体テスト（TypeScript）・モックサーバー
+- `tests/` - 単体テスト（TypeScript）
 - `docs/` - 技術ドキュメント
 
 ---
 
 ## 🧪 テスト
 
+### 単体テスト
+
 ```bash
-# 単体テスト（全24テスト）
+# データ変換ロジックのテスト（全24テスト）
 npm test
-
-# E2Eテスト（MQTT + HTTP モック起動）
-npm run test:e2e
-
-# MQTT ブローカーのみ起動
-npm run mock:mqtt
-
-# OneComme API サーバーのみ起動
-npm run mock:onecomme
 ```
+
+### 動作確認
+
+1. **わんコメを起動**
+2. **アプリを起動** (`npm run dev`)
+3. **設定画面で入力**:
+   - 板ID: `mamiko` など実在する板
+   - わんコメURL: `http://127.0.0.1:11180`
+   - 枠ID: わんコメで取得したID
+4. **Startボタンをクリック**
+5. 実際の掲示板からレスが流れ、わんコメに表示される
 
 ---
 
