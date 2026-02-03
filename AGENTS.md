@@ -28,7 +28,7 @@ main.ts                     # エントリーポイント（45行）
 ├── src/window.ts           # ウィンドウ管理（55行）
 ├── src/tray.ts             # トレイアイコン（45行）
 ├── src/bridge.ts           # MQTTブリッジ（90行）
-│   └── src/onecomme-client.ts  # わんコメAPI呼び出し（30行）
+├── src/onecomme-client.ts  # わんコメAPI呼び出し（30行）
 ├── src/ipc-handlers.ts     # IPCハンドラー（45行）
 └── src/transform.ts        # データ変換（60行）
 ```
@@ -74,8 +74,6 @@ interface JpnknPayload {
   threadkey: string;  // スレッドキー
 }
 ```
-
-**重要**: 旧形式（board, thread, num, message, is_new）は削除済み。新形式のみをサポート。
 
 ### MQTT接続情報
 
@@ -197,12 +195,9 @@ interface OneCommePayload {
 
 ## 禁止事項
 
-1. ❌ 旧形式（board, thread, num, message, is_new）の実装
-2. ❌ インストーラー（NSIS）の追加
-3. ❌ 長文分割機能の実装（削除済み）
-4. ❌ バックティックでのファイル参照（Markdown内）
-5. ❌ 不要な依存パッケージの追加
-6. ❌ preload.tsでのNode.js API直接呼び出し
+1 ❌ バックティックでのファイル参照（Markdown内）
+2 ❌ 不要な依存パッケージの追加
+3 ❌ preload.tsでのNode.js API直接呼び出し
 
 ## ファイルリンク規約（Markdown内）
 
@@ -251,9 +246,3 @@ interface OneCommePayload {
 - **Node.js**: 18.x以上
 - **対応OS**: Windows 10/11
 
-## 今後の開発予定
-
-- [ ] Linux/macOS対応
-- [ ] 複数板の同時購読
-- [ ] コメントフィルタリング機能
-- [ ] 自動更新機能
