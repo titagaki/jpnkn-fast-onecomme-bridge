@@ -1,4 +1,4 @@
-# JPNKNのレスをわんコメに送るやつ
+# jpnkn Fast → わんコメ ブリッジ
 
 **jpnkn の Fast インターフェイス（MQTT）で新着レスを購読し、わんコメ（OneComme）の HTTP API に自動転送する Windows トレイ常駐アプリ**
 
@@ -112,10 +112,14 @@ OneComme HTTP API (127.0.0.1:11180)
 
 ### プロジェクト構成
 
-- `main.ts` - メインプロセス（MQTT購読・わんコメへ送信）
-- `src/transform.ts` - jpnkn → わんコメ データ変換
-- `src/renderer.ts` - 設定画面UI
-- `tests/` - 単体テスト・モックサーバー
+- `main.ts` - エントリーポイント
+- `src/window.ts` - ウィンドウ管理
+- `src/tray.ts` - トレイアイコン
+- `src/bridge.ts` - MQTT接続・メッセージ処理
+- `src/onecomme-client.ts` - わんコメAPI呼び出し
+- `src/transform.ts` - データ変換
+- `src/ipc-handlers.ts` - IPCハンドラー
+- `tests/` - 単体テスト（TypeScript）・モックサーバー
 - `docs/` - 技術ドキュメント
 
 ---
@@ -123,7 +127,7 @@ OneComme HTTP API (127.0.0.1:11180)
 ## 🧪 テスト
 
 ```bash
-# 単体テスト（全44テスト）
+# 単体テスト（全24テスト）
 npm test
 
 # E2Eテスト（MQTT + HTTP モック起動）
@@ -157,7 +161,7 @@ npm run mock:onecomme
 
 ## 🔗 関連リンク
 
-- [jpnkn](https://bbs.jpnkn.com/) - jpnkn 掲示板
-- [jpnkn ドキュメント](https://doc.bbs.jpnkn.com/) - jpnkn 開発者向け機能
+- [BBS.JPNKN.COM](https://bbs.jpnkn.com/) - JPNKN 掲示板
+- [BBS.JPNKN.COMヘルプ](https://doc.bbs.jpnkn.com/) - BBS.JPNKN.COMヘルプ
 - [わんコメ](https://onecomme.com/) - マルチコメントビューア
 - [Electron](https://www.electronjs.org/) - クロスプラットフォーム デスクトップアプリフレームワーク
