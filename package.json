@@ -1,5 +1,5 @@
 {
-  "name": "jpnkn-fast-onecomme-bridge",
+  "name": "jpnkn-onecomme-bridge",
   "version": "0.1.0",
   "private": true,
   "main": "dist/main.js",
@@ -9,10 +9,7 @@
     "build:ts": "tsc && tsc -p tsconfig.preload.json",
     "dev": "npm run build:ts && electron .",
     "build": "npm run clean && npm run build:ts && electron-builder --win portable --x64",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test:e2e": "node tests/e2e-test.js",
-    "mock:mqtt": "node tests/mock-mqtt-broker.js",
-    "mock:onecomme": "node tests/mock-onecomme-server.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "axios": "^1.7.0",
@@ -34,7 +31,7 @@
   },
   "build": {
     "appId": "com.example.jpnkn-onecomme-bridge",
-    "productName": "jpnkn-fast-onecomme-bridge",
+    "productName": "jpnkn-onecomme-bridge",
     "win": {
       "target": "portable",
       "icon": "build/icon.ico"
