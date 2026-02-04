@@ -4,7 +4,6 @@
 
 import mqtt, { type MqttClient } from 'mqtt';
 import store from '../config.js';
-import { parsePayload } from './transform.js';
 import { postToOneComme } from './onecomme-client.js';
 import { sendToRenderer } from './window.js';
 import type { JpnknPayload } from './transform.js';
@@ -17,11 +16,6 @@ const MQTT_CONFIG = {
   KEEPALIVE: 60,
   RECONNECT_PERIOD: 3000
 } as const;
-
-export interface MessagePayload {
-  topic: string;
-  text: string;
-}
 
 export class BridgeManager {
   private client: MqttClient | null = null;
@@ -83,9 +77,6 @@ export class BridgeManager {
       if (!raw) return;
 
       const parsed: JpnknPayload = JSON.parse(raw) as JpnknPayload;
-
-      const text = parsePayload(raw);
-      sendToRenderer('message', { topic, text } as MessagePayload);
 
       const result = await postToOneComme(parsed);
       if (!result.success) {

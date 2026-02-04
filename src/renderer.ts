@@ -13,6 +13,7 @@ interface AppConfig {
   topics: string;
   onecommeBase: string;
   autoStart: boolean;
+  prefixResNo: boolean;
 }
 
 const elems = {
@@ -20,6 +21,7 @@ const elems = {
   topics: document.getElementById('topics') as HTMLInputElement,
   onecommeBase: document.getElementById('onecommeBase') as HTMLInputElement,
   autoStart: document.getElementById('autoStart') as HTMLInputElement,
+  prefixResNo: document.getElementById('prefixResNo') as HTMLInputElement,
   saveBtn: document.getElementById('saveBtn') as HTMLButtonElement,
   startBtn: document.getElementById('startBtn') as HTMLButtonElement,
   stopBtn: document.getElementById('stopBtn') as HTMLButtonElement,
@@ -35,7 +37,8 @@ elems.saveBtn?.addEventListener('click', async () => {
     serviceId: elems.serviceId.value.trim(),
     topics: elems.topics.value.trim(),
     onecommeBase: elems.onecommeBase.value.trim(),
-    autoStart: elems.autoStart.checked
+    autoStart: elems.autoStart.checked,
+    prefixResNo: elems.prefixResNo.checked
   };
 
   await window.bridge.saveConfig(cfg as unknown as Record<string, unknown>);
@@ -63,7 +66,8 @@ elems.startBtn?.addEventListener('click', async () => {
     serviceId: elems.serviceId.value.trim(),
     topics: elems.topics.value.trim(),
     onecommeBase: elems.onecommeBase.value.trim(),
-    autoStart: elems.autoStart.checked
+    autoStart: elems.autoStart.checked,
+    prefixResNo: elems.prefixResNo.checked
   };
   await window.bridge.saveConfig(cfg as unknown as Record<string, unknown>);
 
@@ -115,6 +119,7 @@ window.bridge.onLog((msg: unknown) => {
     if (cfg.topics) elems.topics.value = cfg.topics;
     if (cfg.onecommeBase) elems.onecommeBase.value = cfg.onecommeBase;
     if (typeof cfg.autoStart === 'boolean') elems.autoStart.checked = cfg.autoStart;
+    if (typeof cfg.prefixResNo === 'boolean') elems.prefixResNo.checked = cfg.prefixResNo;
   }
   updateButtons();
 })();
