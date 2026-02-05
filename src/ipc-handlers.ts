@@ -48,12 +48,7 @@ export function registerIpcHandlers(bridge: BridgeManager): void {
 
   ipcMain.handle('get-profile-image', (): string | null => {
     try {
-      const profilePath = path.join(
-        app.isPackaged ? process.resourcesPath : app.getAppPath(),
-        'build',
-        'profile',
-        'profile.png'
-      );
+      const profilePath = path.join(app.getAppPath(), 'build', 'profile', 'profile.png');
       
       if (fs.existsSync(profilePath)) {
         const imageBuffer = fs.readFileSync(profilePath);
