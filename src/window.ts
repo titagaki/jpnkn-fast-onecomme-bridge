@@ -2,7 +2,7 @@
  * ウィンドウ管理モジュール
  */
 
-import { BrowserWindow, Menu, MenuItem } from 'electron';
+import { BrowserWindow, Menu, MenuItem, app } from 'electron';
 import path from 'node:path';
 
 let win: BrowserWindow | null = null;
@@ -17,13 +17,15 @@ export function getWindow(): BrowserWindow | null {
 }
 
 export function createWindow(dirname: string): BrowserWindow {
+  const iconPath = path.join(app.getAppPath(), 'build', 'icon.ico');
+  
   win = new BrowserWindow({
     width: 680,
     height: 800,
     show: false,
     resizable: true,
     autoHideMenuBar: true,
-    icon: path.join(dirname, '..', 'build', 'icon.ico'),
+    icon: iconPath,
     webPreferences: {
       preload: path.join(dirname, 'preload.js'),
       contextIsolation: true,
