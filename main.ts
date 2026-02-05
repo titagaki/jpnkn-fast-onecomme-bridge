@@ -31,9 +31,18 @@ app.whenReady().then(() => {
   // 初回起動時は常にウィンドウを表示
   win.show();
 
+  // Windows起動時にアプリを自動起動する設定
   const openAtLogin = !!store.get('autoStart');
   app.setLoginItemSettings({ openAtLogin, openAsHidden: true });
-  if (openAtLogin) bridge.start();
+  
+  // アプリ起動時にMQTT接続を自動開始する設定
+  const autoStart = !!store.get('autoStart');
+  if (autoStart) {
+    // ウィンドウが完全にロードされた後に接続開始
+    win.webContents.once('did-finish-load', () => {
+      setTimeout(() => bridge.start(), 1000);
+    });
+  }
 });
 
 app.on('window-all-closed', () => {
