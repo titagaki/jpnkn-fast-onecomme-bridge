@@ -6,13 +6,15 @@ export interface StoreSchema {
   onecommeBase: string;
   serviceId: string;
   autoStart: boolean;
+  prefixResNo: boolean;
 }
 
 const schema = {
   topics: { type: 'string' as const, default: 'mamiko' },
   onecommeBase: { type: 'string' as const, default: 'http://127.0.0.1:11180' },
   serviceId: { type: 'string' as const, default: '' },
-  autoStart: { type: 'boolean' as const, default: false }
+  autoStart: { type: 'boolean' as const, default: false },
+  prefixResNo: { type: 'boolean' as const, default: false }
 };
 
 // Use type assertion since electron-store doesn't export proper types

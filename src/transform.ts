@@ -23,6 +23,7 @@ export interface OneCommePayload {
 
 export interface TransformOptions {
   serviceId: string;
+  prefixResNo?: boolean;
 }
 
 /**
@@ -32,7 +33,7 @@ export function transformJpnknToOneComme(
   jpnknPayload: JpnknPayload,
   options: TransformOptions
 ): OneCommePayload {
-  const { serviceId } = options;
+  const { serviceId, prefixResNo = false } = options;
 
   if (!serviceId) {
     throw new Error('serviceId is required');
@@ -43,7 +44,8 @@ export function transformJpnknToOneComme(
   }
 
   const parts = jpnknPayload.body.split('<>');
-  const name = parts[0] || '名無し';
+  const baseName = parts[0] || '名無し';
+  const name = prefixResNo ? `${jpnknPayload.no} ${baseName}` : baseName;
   const mail = parts[1] || '';
   const comment = parts[3] || '';
   
