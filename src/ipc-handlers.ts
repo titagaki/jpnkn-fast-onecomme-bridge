@@ -50,6 +50,7 @@ export function registerIpcHandlers(bridge: BridgeManager): void {
     try {
       const profilePath = path.join(
         app.isPackaged ? process.resourcesPath : app.getAppPath(),
+        'build',
         'profile',
         'profile.png'
       );
