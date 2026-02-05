@@ -23,6 +23,7 @@ export function createWindow(dirname: string): BrowserWindow {
     show: false,
     resizable: true,
     autoHideMenuBar: true,
+    icon: path.join(dirname, '..', 'build', 'icon.ico'),
     webPreferences: {
       preload: path.join(dirname, 'preload.js'),
       contextIsolation: true,
