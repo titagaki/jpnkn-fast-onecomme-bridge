@@ -30,8 +30,7 @@ export async function postToOneComme(jpnknData: JpnknPayload): Promise<PostResul
     let profileImagePath: string | undefined;
     if (useProfileImage) {
       try {
-        const appPath = app.isPackaged ? process.resourcesPath : app.getAppPath();
-        const imagePath = path.join(appPath, 'build', 'profile', 'profile.png');
+        const imagePath = path.join(app.getAppPath(), 'build', 'profile', 'profile.png');
         
         if (fs.existsSync(imagePath)) {
           const imageBuffer = fs.readFileSync(imagePath);
