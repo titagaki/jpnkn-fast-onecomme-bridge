@@ -6,7 +6,10 @@
     "service": {
       "type": "object",
       "properties": {
-        "id": { "type": "string", "description": "わんコメの枠ID" }
+        "id": { "type": "string", "description": "わんコメの枠ID" },
+        "write": { "type": "boolean", "description": "コメントをログに記録するか" },
+        "speech": { "type": "boolean", "description": "コメントを読み上げるか" },
+        "persist": { "type": "boolean", "description": "コメントを永続化するか" }
       },
       "required": ["id"]
     },
@@ -16,7 +19,12 @@
         "id": { "type": "string", "description": "一意のコメントID" },
         "userId": { "type": "string", "description": "投稿者ID" },
         "name": { "type": "string", "description": "投稿者名" },
-        "comment": { "type": "string", "description": "本文" }
+        "comment": { "type": "string", "description": "本文" },
+        "badges": { "type": "array", "items": {}, "description": "バッジ情報の配列" },
+        "profileImage": { "type": "string", "description": "プロフィール画像のURL" },
+        "hasGift": { "type": "boolean", "description": "ギフトの有無" },
+        "isOwner": { "type": "boolean", "description": "オーナーかどうか" },
+        "timestamp": { "type": "number", "description": "タイムスタンプ（ミリ秒）" }
       },
       "required": ["id", "userId", "name", "comment"]
     }

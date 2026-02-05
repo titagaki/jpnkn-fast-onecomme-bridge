@@ -18,12 +18,14 @@ export interface OneCommePayload {
     userId: string;
     name: string;
     comment: string;
+    profileImage?: string;
   };
 }
 
 export interface TransformOptions {
   serviceId: string;
   prefixResNo?: boolean;
+  profileImagePath?: string;
 }
 
 /**
@@ -33,7 +35,7 @@ export function transformJpnknToOneComme(
   jpnknPayload: JpnknPayload,
   options: TransformOptions
 ): OneCommePayload {
-  const { serviceId, prefixResNo = false } = options;
+  const { serviceId, prefixResNo = false, profileImagePath } = options;
 
   if (!serviceId) {
     throw new Error('serviceId is required');
@@ -59,7 +61,7 @@ export function transformJpnknToOneComme(
   // commentIdを生成
   const commentId = `jpnkn:${jpnknPayload.bbsid}:${jpnknPayload.threadkey}:${jpnknPayload.no}`;
 
-  return {
+  const payload: OneCommePayload = {
     service: { id: serviceId },
     comment: {
       id: commentId,
@@ -68,6 +70,13 @@ export function transformJpnknToOneComme(
       comment
     }
   };
+
+  // プロフィール画像を追加（パスが指定されている場合）
+  if (profileImagePath) {
+    payload.comment.profileImage = profileImagePath;
+  }
+
+  return payload;
 }
 
 /**
