@@ -1,6 +1,6 @@
 {
   "name": "jpnkn-onecomme-bridge",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "main": "dist/main.js",
   "type": "module",
@@ -37,7 +37,7 @@
       "icon": "build/icon.ico"
     },
     "portable": {
-      "artifactName": "${productName}-${version}-portable.exe"
+      "artifactName": "${productName}-${version}.exe"
     },
     "files": [
       "dist/**",

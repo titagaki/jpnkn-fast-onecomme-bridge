@@ -183,6 +183,15 @@
       margin-top: 8px;
       color: #d0d0d0;
     }
+    .profile-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin-left: 12px;
+      border: 2px solid #4a5568;
+      object-fit: cover;
+      background: #1a1d23;
+    }
   </style>
 </head>
 <body>
@@ -215,6 +224,13 @@
         <label class="checkbox-label">
           <input id="prefixResNo" type="checkbox" />
           名前にレス番号を付ける（例: 123 名無し）
+        </label>
+      </div>
+      <div class="field">
+        <label class="checkbox-label">
+          <input id="useProfileImage" type="checkbox" />
+          プロフィール画像を使用する
+          <img id="profileIcon" class="profile-icon" alt="プロフィール画像" style="display: none;" />
         </label>
       </div>
     </div>

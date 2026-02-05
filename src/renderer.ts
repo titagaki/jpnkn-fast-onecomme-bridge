@@ -14,6 +14,7 @@ interface AppConfig {
   onecommeBase: string;
   autoStart: boolean;
   prefixResNo: boolean;
+  useProfileImage: boolean;
 }
 
 const elems = {
@@ -22,6 +23,8 @@ const elems = {
   onecommeBase: document.getElementById('onecommeBase') as HTMLInputElement,
   autoStart: document.getElementById('autoStart') as HTMLInputElement,
   prefixResNo: document.getElementById('prefixResNo') as HTMLInputElement,
+  useProfileImage: document.getElementById('useProfileImage') as HTMLInputElement,
+  profileIcon: document.getElementById('profileIcon') as HTMLImageElement,
   saveBtn: document.getElementById('saveBtn') as HTMLButtonElement,
   startBtn: document.getElementById('startBtn') as HTMLButtonElement,
   stopBtn: document.getElementById('stopBtn') as HTMLButtonElement,
@@ -38,7 +41,8 @@ elems.saveBtn?.addEventListener('click', async () => {
     topics: elems.topics.value.trim(),
     onecommeBase: elems.onecommeBase.value.trim(),
     autoStart: elems.autoStart.checked,
-    prefixResNo: elems.prefixResNo.checked
+    prefixResNo: elems.prefixResNo.checked,
+    useProfileImage: elems.useProfileImage.checked
   };
 
   await window.bridge.saveConfig(cfg as unknown as Record<string, unknown>);
@@ -67,7 +71,8 @@ elems.startBtn?.addEventListener('click', async () => {
     topics: elems.topics.value.trim(),
     onecommeBase: elems.onecommeBase.value.trim(),
     autoStart: elems.autoStart.checked,
-    prefixResNo: elems.prefixResNo.checked
+    prefixResNo: elems.prefixResNo.checked,
+    useProfileImage: elems.useProfileImage.checked
   };
   await window.bridge.saveConfig(cfg as unknown as Record<string, unknown>);
 
@@ -120,7 +125,16 @@ window.bridge.onLog((msg: unknown) => {
     if (cfg.onecommeBase) elems.onecommeBase.value = cfg.onecommeBase;
     if (typeof cfg.autoStart === 'boolean') elems.autoStart.checked = cfg.autoStart;
     if (typeof cfg.prefixResNo === 'boolean') elems.prefixResNo.checked = cfg.prefixResNo;
+    if (typeof cfg.useProfileImage === 'boolean') elems.useProfileImage.checked = cfg.useProfileImage;
   }
+
+  // プロフィール画像をロード
+  const profileImageData = await window.bridge.getProfileImage();
+  if (profileImageData && elems.profileIcon) {
+    elems.profileIcon.src = profileImageData;
+    elems.profileIcon.style.display = 'inline';
+  }
+
   updateButtons();
 })();
 
