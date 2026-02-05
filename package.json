@@ -43,6 +43,7 @@
       "dist/**",
       "src/**",
       "build/**",
+      "profile/**",
       "package.json"
     ],
     "asar": true
